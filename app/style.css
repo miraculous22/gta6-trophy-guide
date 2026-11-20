@@ -1,18 +1,18 @@
-/* GTA VI Trophy Guide: an original dark design. No images, no web fonts, no Rockstar art. */
+/* GTA VI Trophy Guide — an original dark theme. No images, no web fonts, no Rockstar art. */
 :root {
-  --bg: #14101f;
-  --panel: #1e1830;
-  --panel-soft: #262038;
-  --line: #3a3157;
-  --text: #f2eefc;
-  --muted: #b3a9d1;
-  --accent: #ff5da2;
-  --accent-2: #2ee6c8;
-  --gold: #f5b942;
-  --silver: #c9d1d9;
+  --bg: #100d1a;
+  --panel: #1c1730;
+  --panel-soft: #241d3d;
+  --line: #3d335c;
+  --text: #f4effd;
+  --muted: #b6abd6;
+  --accent: #ff6b9d;
+  --accent-2: #35e0c2;
+  --gold: #f2b63d;
+  --silver: #ccd4de;
   --bronze: #e08a4c;
-  --platinum: #7fe3ff;
-  --danger: #ff6b6b;
+  --platinum: #82e2ff;
+  --danger: #ff7070;
   --radius: 12px;
 }
 
@@ -27,7 +27,7 @@ body {
 }
 
 a { color: var(--accent-2); }
-a:hover { color: #7df0dc; }
+a:hover { color: #8af2df; }
 
 .masthead {
   display: flex;
@@ -35,7 +35,7 @@ a:hover { color: #7df0dc; }
   gap: 24px;
   justify-content: space-between;
   padding: 28px 24px 20px;
-  background: linear-gradient(135deg, #2b1155 0%, #14101f 55%, #0d2b33 100%);
+  background: linear-gradient(135deg, #33135e 0%, #100d1a 55%, #0e2f38 100%);
   border-bottom: 1px solid var(--line);
 }
 
@@ -48,13 +48,8 @@ a:hover { color: #7df0dc; }
   text-transform: uppercase;
 }
 
-h1 {
-  margin: 0 0 8px;
-  font-size: 34px;
-  line-height: 1.1;
-}
-
-.subtitle { margin: 0; max-width: 640px; color: var(--muted); }
+h1 { margin: 0 0 8px; font-size: 34px; line-height: 1.1; }
+.subtitle { margin: 0; max-width: 660px; color: var(--muted); }
 
 .progress-card {
   min-width: 280px;
@@ -66,7 +61,7 @@ h1 {
 }
 
 .progress-count { margin: 0 0 8px; font-size: 22px; font-weight: 800; }
-.progress-bar { height: 10px; overflow: hidden; background: #0d0a16; border-radius: 6px; }
+.progress-bar { height: 10px; overflow: hidden; background: #0b0813; border-radius: 6px; }
 .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width 0.3s ease; }
 .progress-detail { margin: 8px 0 4px; color: var(--muted); font-size: 13px; }
 .progress-note { margin: 0; color: var(--muted); font-size: 13px; }
@@ -79,7 +74,6 @@ h1 {
   border-left: 5px solid var(--danger);
   border-radius: var(--radius);
 }
-
 .warning h2 { margin: 0 0 8px; font-size: 18px; }
 .warning ul { margin: 0; padding-left: 20px; }
 .warning li { margin: 4px 0; }
@@ -105,13 +99,12 @@ h1 {
   display: grid;
   gap: 10px;
 }
-
 .control-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 .control-row label { font-size: 13px; font-weight: 600; color: var(--muted); }
 .control-row input[type="search"], .control-row select {
   margin-left: 6px;
   padding: 7px 10px;
-  background: #14101f;
+  background: #100d1a;
   color: var(--text);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -131,6 +124,9 @@ button, .import {
   font-weight: 700;
   cursor: pointer;
 }
+/* The label rule above would otherwise tint the Import label muted lavender on
+   pink; keep the button text white for contrast. */
+.control-row label.import { color: #fff; }
 button:hover, .import:hover { filter: brightness(1.12); }
 #import { display: none; }
 #reset { background: #4a4266; }
@@ -139,7 +135,6 @@ button:hover, .import:hover { filter: brightness(1.12); }
 #progressMini { margin-left: auto; font-weight: 700; color: var(--text); }
 
 main { margin: 20px 24px; }
-
 section, .trophy-card { scroll-margin-top: 96px; }
 
 .empty-state {
@@ -152,15 +147,8 @@ section, .trophy-card { scroll-margin-top: 96px; }
 }
 
 .trophy-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-
-.trophy-card {
-  padding: 14px 16px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-}
-.trophy-card.is-earned { border-color: var(--accent-2); background: #1d2f33; }
-
+.trophy-card { padding: 14px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
+.trophy-card.is-earned { border-color: var(--accent-2); background: #1b2e31; }
 .trophy-head { display: flex; gap: 12px; align-items: flex-start; }
 .trophy-head input[type="checkbox"] { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--accent-2); flex-shrink: 0; cursor: pointer; }
 
@@ -172,7 +160,7 @@ section, .trophy-card { scroll-margin-top: 96px; }
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  background: #3a3157;
+  background: #3d335c;
   color: var(--text);
 }
 .grade-platinum .grade-badge { background: #0e4a5e; color: var(--platinum); }
@@ -184,11 +172,10 @@ section, .trophy-card { scroll-margin-top: 96px; }
 .trophy-title strong { font-size: 16px; }
 .trophy-desc { color: var(--muted); font-size: 14px; font-style: italic; }
 .trophy-kind, .trophy-meta { color: var(--muted); font-size: 12px; }
-
 .trophy-actions { flex-shrink: 0; }
 .trophy-actions button { padding: 6px 12px; font-size: 13px; }
 
-.trophy-guide { margin-top: 12px; padding: 12px 14px; background: #14101f; border-left: 3px solid var(--accent-2); border-radius: 8px; }
+.trophy-guide { margin-top: 12px; padding: 12px 14px; background: #100d1a; border-left: 3px solid var(--accent-2); border-radius: 8px; }
 .trophy-guide p { margin: 0 0 8px; }
 .trophy-guide p:last-child { margin-bottom: 0; }
 .trophy-warning { color: #ffb3b3; font-weight: 700; }

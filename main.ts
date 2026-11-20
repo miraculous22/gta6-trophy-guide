@@ -1,14 +1,15 @@
-// GTA 6 trophy guide, entry for make.fun's gta6-trophy-guide-01 bounty (Node 22, standard
-// library only). The guide itself is plain static files: app/index.html, app/app.js and
-// app/style.css render the tracker, and app/data/trophies.json holds the official 55
-// trophies with a cited guide for each. Nothing is built and nothing is fetched over the
-// network at run time. This program hands the entry in: it copies app/ and screenshots/
-// from beside this file to /output and writes /output/dossier.json, the summary the judge
-// reads (the screenshots, the first load's files and bytes, and the source), using the
-// vendored make.fun library. Leave vendor/makefun-frontend.ts as it is: the scorer
-// requires dossier.json to be byte for byte what its own copy of the library writes.
+// GTA 6 trophy guide — entry for make.fun's gta6-trophy-guide-01 bounty (Node 22,
+// standard library only). The guide itself is plain static files: app/index.html,
+// app/app.js and app/style.css render the tracker, and app/data/trophies.json holds the
+// official 55 trophies with a cited guide for each. Nothing is built and nothing is
+// fetched over the network at run time. This program hands the entry in: it copies app/
+// and screenshots/ from beside this file to /output and writes /output/dossier.json,
+// the summary the judge reads (the screenshots, the first load's files and bytes, and
+// the source), using the vendored make.fun library. Leave vendor/makefun-frontend.ts
+// alone: the scorer requires dossier.json to be byte for byte what its own copy of
+// the library writes.
 //
-// Serve the guide locally with `node serve.ts`, then open http://localhost:8080.
+// Run the guide locally with `node serve.ts`, then open http://localhost:8080.
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 

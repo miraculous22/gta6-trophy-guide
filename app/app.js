@@ -1,12 +1,12 @@
-// GTA VI trophy guide and tracker: loads app/data/trophies.json, renders the 55 trophies
-// as a checklist, saves progress in localStorage, and offers filters, a spoiler setting,
-// export/import, and a roadmap to the platinum. Everything runs offline from app/ files.
+// GTA VI trophy guide and tracker. Loads app/data/trophies.json, renders the 55 trophies
+// as a checklist, keeps progress in localStorage, and adds filters, a spoiler setting,
+// export/import and a roadmap to the platinum. The whole app runs offline from app/ files.
 
-const STORAGE_KEY = 'gta6-trophy-guide-progress-v1';
+const PROGRESS_KEY = 'gta6-trophy-guide-progress-v1';
 const REVEALED_KEY = 'gta6-trophy-guide-revealed-v1';
 
 // Source pages this guide actually read, with the databases they cross-checked.
-// Names without a link are databases the launch-week guides cite by name.
+// A name without a link is a database the launch-week guides cite by name.
 const SOURCE_LINKS = {
   'Output Lag': 'https://outputlag.com/guides/gta-6-trophy-list/',
   'Sixshore': 'https://sixshore.com/gta-6/guides/trophies-and-achievements/',
@@ -37,15 +37,15 @@ const spoilersEl = document.getElementById('spoilers');
 const listCountEl = document.getElementById('listCount');
 const emptyStateEl = document.getElementById('emptyState');
 
-const doc = await loadTrophyData();
+const doc = await fetchTrophyData();
 const trophies = doc.trophies;
 const params = new URLSearchParams(location.search);
 
-let earned = loadSavedProgress();
-let revealed = loadRevealedHidden();
+let earned = readStoredSet(PROGRESS_KEY);
+let revealed = readStoredSet(REVEALED_KEY);
 let demoMode = false;
 
-if (params.get('demo') === '1') applyDemoProgress();
+if (params.get('demo') === '1') seedDemoProgress();
 if (params.get('filter')) kindEl.value = params.get('filter');
 if (params.get('spoilers') === 'off') spoilersEl.checked = false;
 if (params.get('grade')) gradeEl.value = params.get('grade');
@@ -57,40 +57,31 @@ wireControls();
 
 if (params.get('open')) openTrophyById(Number(params.get('open')));
 
-async function loadTrophyData() {
+async function fetchTrophyData() {
   const response = await fetch('data/trophies.json');
   if (!response.ok) throw new Error('trophies.json could not be loaded');
   return response.json();
 }
 
-function loadSavedProgress() {
+function readStoredSet(key) {
   try {
-    return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]'));
+    return new Set(JSON.parse(localStorage.getItem(key) ?? '[]'));
   } catch {
     return new Set();
   }
 }
 
-function loadRevealedHidden() {
-  try {
-    return new Set(JSON.parse(localStorage.getItem(REVEALED_KEY) ?? '[]'));
-  } catch {
-    return new Set();
-  }
-}
-
-function saveProgress() {
+function storeProgress() {
   if (demoMode) return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify([...earned]));
+  localStorage.setItem(PROGRESS_KEY, JSON.stringify([...earned]));
   localStorage.setItem(REVEALED_KEY, JSON.stringify([...revealed]));
 }
 
 // Preview mode: seeds a sample set of earned trophies in memory only, so a visitor
 // can see the tracker with progress. It never writes to localStorage.
-function applyDemoProgress() {
+function seedDemoProgress() {
   demoMode = true;
-  const sample = [2, 3, 4, 5, 8, 15, 16, 19, 20, 21, 24, 28, 30, 32, 33, 35, 36, 39, 42, 43, 46, 52, 53];
-  earned = new Set(sample);
+  earned = new Set([2, 3, 4, 8, 15, 16, 19, 20, 21, 28, 35, 42, 53]);
   document.getElementById('progressNote').textContent =
     'Sample progress for preview — ticking boxes now does not save. Reload without ?demo=1 for your own checklist.';
 }
@@ -122,11 +113,11 @@ function renderSourceList() {
   }
 }
 
-function trophyIsHidden(t) {
+function isSpoilerHidden(t) {
   return t.hidden && spoilersEl.checked && !earned.has(t.id) && !revealed.has(t.id);
 }
 
-function trophyMatchesFilters(t) {
+function matchesFilters(t) {
   const q = searchEl.value.trim().toLowerCase();
   if (q && !(t.name.toLowerCase().includes(q) || t.description.toLowerCase().includes(q) || t.guide.toLowerCase().includes(q))) return false;
   if (gradeEl.value !== 'all' && t.grade !== gradeEl.value) return false;
@@ -145,16 +136,16 @@ function renderProgress() {
   document.getElementById('progressCount').textContent = `${done} of ${total} earned`;
   document.getElementById('progressMini').textContent = `${done} of ${total} earned`;
   document.getElementById('progressFill').style.width = `${Math.round((done / total) * 100)}%`;
-  const byGrade = (grade) => trophies.filter((t) => t.grade === grade && earned.has(t.id)).length;
-  const totals = (grade) => trophies.filter((t) => t.grade === grade).length;
+  const earnedOf = (grade) => trophies.filter((t) => t.grade === grade && earned.has(t.id)).length;
+  const totalOf = (grade) => trophies.filter((t) => t.grade === grade).length;
   document.getElementById('progressDetail').textContent =
-    `Platinum ${byGrade('platinum')}/${totals('platinum')} · Gold ${byGrade('gold')}/${totals('gold')} · Silver ${byGrade('silver')}/${totals('silver')} · Bronze ${byGrade('bronze')}/${totals('bronze')}`;
+    `Platinum ${earnedOf('platinum')}/${totalOf('platinum')} · Gold ${earnedOf('gold')}/${totalOf('gold')} · Silver ${earnedOf('silver')}/${totalOf('silver')} · Bronze ${earnedOf('bronze')}/${totalOf('bronze')}`;
 }
 
 function renderTrophyList() {
   renderProgress();
   listEl.replaceChildren();
-  const shown = trophies.filter(trophyMatchesFilters);
+  const shown = trophies.filter(matchesFilters);
   listCountEl.textContent = `Showing ${shown.length} of ${trophies.length} trophies`;
   if (kindEl.value === 'online') {
     emptyStateEl.hidden = false;
@@ -183,7 +174,7 @@ function buildTrophyCard(t) {
   box.addEventListener('change', () => {
     if (box.checked) earned.add(t.id);
     else earned.delete(t.id);
-    saveProgress();
+    storeProgress();
     renderTrophyList();
   });
   head.append(box);
@@ -195,7 +186,7 @@ function buildTrophyCard(t) {
 
   const title = document.createElement('div');
   title.className = 'trophy-title';
-  if (trophyIsHidden(t)) {
+  if (isSpoilerHidden(t)) {
     const hiddenName = document.createElement('strong');
     hiddenName.textContent = 'Hidden trophy';
     title.append(hiddenName);
@@ -225,13 +216,13 @@ function buildTrophyCard(t) {
 
   const actions = document.createElement('div');
   actions.className = 'trophy-actions';
-  if (trophyIsHidden(t)) {
+  if (isSpoilerHidden(t)) {
     const reveal = document.createElement('button');
     reveal.type = 'button';
     reveal.textContent = 'Reveal';
     reveal.addEventListener('click', () => {
       revealed.add(t.id);
-      saveProgress();
+      storeProgress();
       renderTrophyList();
       openTrophyById(t.id);
     });
@@ -251,7 +242,7 @@ function buildTrophyCard(t) {
   const guide = document.createElement('div');
   guide.className = 'trophy-guide';
   guide.hidden = true;
-  if (!trophyIsHidden(t)) {
+  if (!isSpoilerHidden(t)) {
     if (t.warning) {
       const warn = document.createElement('p');
       warn.className = 'trophy-warning';
@@ -306,7 +297,7 @@ function wireControls() {
     if (!confirm('Clear all earned ticks on this device?')) return;
     earned = new Set();
     revealed = new Set();
-    saveProgress();
+    storeProgress();
     renderTrophyList();
   });
 }
@@ -336,7 +327,7 @@ async function importProgress(event) {
     const valid = new Set(trophies.map((t) => t.id));
     earned = new Set(ids.filter((id) => valid.has(id)));
     if (Array.isArray(data.revealed)) revealed = new Set(data.revealed.filter((id) => valid.has(id)));
-    saveProgress();
+    storeProgress();
     renderTrophyList();
   } catch {
     alert('That file is not a trophy progress export from this guide.');
